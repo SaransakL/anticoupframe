@@ -1,565 +1,285 @@
-```html
+```anticoupframe
 <!DOCTYPE html>
 <html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Overlay Template</title>
+    <title>#AntiCoup Frame</title>
 
-    <!-- Bootstrap -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
 
     <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            background: #f5f6f8;
-            color: #111;
-        }
-
-        .app {
-            max-width: 900px;
-            margin: 60px auto;
-        }
-
-        .editor-card {
-            background: white;
-            border: 0;
-            border-radius: 24px;
-            box-shadow: 0 15px 50px rgba(0,0,0,.08);
-        }
-
-        /* =========================
-           PREVIEW
-        ========================= */
-
-        .preview {
-            width: 100%;
+            background: #f5f5f5;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+        }
 
+        .card {
+            border: 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,.08);
+        }
+
+        #preview {
+            width: 100%;
+            max-height: 600px;
+            object-fit: contain;
+            background: #eee;
+            border-radius: 14px;
+        }
+
+        .upload-box {
+            border: 2px dashed #ccc;
+            border-radius: 14px;
             padding: 30px;
-
-            background:
-                linear-gradient(45deg, #e9e9e9 25%, transparent 25%),
-                linear-gradient(-45deg, #e9e9e9 25%, transparent 25%),
-                linear-gradient(45deg, transparent 75%, #e9e9e9 75%),
-                linear-gradient(-45deg, transparent 75%, #e9e9e9 75%);
-
-            background-size: 24px 24px;
-
-            background-position:
-                0 0,
-                0 12px,
-                12px -12px,
-                -12px 0;
-
-            border-radius: 18px;
-        }
-
-        #canvas {
-            max-width: 100%;
-            height: auto;
-
-            display: none;
-
-            box-shadow:
-                0 15px 40px rgba(0,0,0,.18);
-        }
-
-        /* =========================
-           UPLOAD
-        ========================= */
-
-        .upload {
-            border: 2px dashed #ddd;
-            border-radius: 16px;
-
-            padding: 35px 20px;
-
             text-align: center;
-
             cursor: pointer;
-
             transition: .2s;
         }
 
-        .upload:hover {
-            border-color: #111;
-            background: #fafafa;
+        .upload-box:hover {
+            border-color: #0d6efd;
+            background: #f8fbff;
         }
 
-        .upload-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
+        #downloadBtn {
+            display: none;
         }
-
-        /* =========================
-           BUTTON
-        ========================= */
-
-        .download {
-            height: 52px;
-            border-radius: 13px;
-            font-weight: 600;
-        }
-
     </style>
 </head>
 
 <body>
 
+<div class="container py-5">
+    <div class="row justify-content-center">
 
-<div class="container app">
+        <div class="col-lg-7">
 
-    <div class="card editor-card p-4">
+            <div class="card p-4">
 
-        <!-- HEADER -->
+                <h3 class="fw-bold mb-1">
+                    #AntiCoup Frame
+                </h3>
 
-        <div class="text-center mb-4">
+                <p class="text-secondary mb-4">
+                    อัปโหลดรูปของคุณ แล้วระบบจะใส่กรอบให้โดยอัตโนมัติ<br>
+                    เว็บไซต์โดยนายธนาธาร วัฒนไพศาล
+                </p>
 
-            <h2 class="fw-bold mb-2">
-                ใส่รูปของคุณ
-            </h2>
+                <label class="upload-box mb-4">
+                    <input
+                        type="file"
+                        id="imageInput"
+                        accept="image/*"
+                        hidden
+                    >
 
-            <p class="text-secondary mb-0">
-                อัปโหลดรูป แล้วระบบจะใส่ Overlay ให้อัตโนมัติ
-            </p>
+                    <div class="fs-1 mb-2">＋</div>
+
+                    <strong>เลือกรูปภาพ</strong>
+
+                    <div class="text-secondary small mt-1">
+                        PNG / JPG / WEBP
+                    </div>
+                </label>
+
+                <canvas id="canvas" class="d-none"></canvas>
+
+                <img
+                    id="preview"
+                    class="d-none"
+                    alt="Preview"
+                >
+
+                <button
+                    id="downloadBtn"
+                    class="btn btn-primary btn-lg w-100 mt-4"
+                >
+                    ดาวน์โหลดรูป
+                </button>
+
+            </div>
 
         </div>
-
-
-        <!-- PREVIEW -->
-
-        <div class="preview mb-4">
-
-            <div
-                id="empty"
-                class="text-center text-secondary py-5"
-            >
-
-                <div style="font-size:50px;">
-                    🖼️
-                </div>
-
-                <div class="mt-2">
-                    ยังไม่มีรูปภาพ
-                </div>
-
-            </div>
-
-            <canvas id="canvas"></canvas>
-
-        </div>
-
-
-        <!-- UPLOAD -->
-
-        <label class="upload w-100 mb-3">
-
-            <div class="upload-icon">
-                📤
-            </div>
-
-            <div class="fw-semibold">
-                คลิกเพื่ออัปโหลดรูป
-            </div>
-
-            <small class="text-secondary">
-                PNG / JPG / WEBP
-            </small>
-
-            <input
-                type="file"
-                id="imageInput"
-                accept="image/*"
-                hidden
-            >
-
-        </label>
-
-
-        <!-- DOWNLOAD -->
-
-        <button
-            id="downloadBtn"
-            class="btn btn-dark download w-100"
-            disabled
-        >
-            ดาวน์โหลดรูป
-        </button>
 
     </div>
-
 </div>
-
 
 <script>
 
-/*
-==================================================
-ตั้งค่า Overlay ตรงนี้
-==================================================
+    // ==============================
+    // กำหนด Overlay ตายตัว
+    // ==============================
 
-ใส่ชื่อไฟล์ Overlay ของคุณ
-
-ตัวอย่าง:
-
-overlay.png
-
-ต้องอยู่โฟลเดอร์เดียวกับ HTML
-*/
-
-const OVERLAY_URL = "overlay.png";
+    const OVERLAY_URL = "overlay.png";
 
 
-/*
-==================================================
-ตำแหน่งรูป
-==================================================
+    // ==============================
+    // Elements
+    // ==============================
 
-กำหนดพื้นที่ที่รูปของผู้ใช้จะถูกวาง
+    const imageInput = document.getElementById("imageInput");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
 
-ค่าทั้งหมดเป็นเปอร์เซ็นต์
-
-x      = ตำแหน่งซ้าย
-y      = ตำแหน่งบน
-width  = ความกว้าง
-height = ความสูง
-
-ตัวอย่างด้านล่าง:
-รูปผู้ใช้กินพื้นที่ 80% ของ Template
-*/
-
-const PHOTO_AREA = {
-
-    x: 10,
-
-    y: 10,
-
-    width: 80,
-
-    height: 80
-
-};
+    const preview = document.getElementById("preview");
+    const downloadBtn = document.getElementById("downloadBtn");
 
 
-/*
-==================================================
-ELEMENTS
-==================================================
-*/
+    // ==============================
+    // โหลด Overlay
+    // ==============================
 
-const imageInput =
-    document.getElementById("imageInput");
+    const overlay = new Image();
 
-const canvas =
-    document.getElementById("canvas");
+    overlay.onload = () => {
+        console.log("Overlay loaded");
+    };
 
-const ctx =
-    canvas.getContext("2d");
-
-const empty =
-    document.getElementById("empty");
-
-const downloadBtn =
-    document.getElementById("downloadBtn");
+    overlay.src = OVERLAY_URL;
 
 
-let userImage = null;
-let overlayImage = null;
+    // ==============================
+    // Upload รูป
+    // ==============================
 
-
-/*
-==================================================
-โหลด Overlay
-==================================================
-*/
-
-overlayImage = new Image();
-
-overlayImage.onload = function () {
-
-    /*
-        ยังไม่ต้องแสดง
-        รอผู้ใช้อัปโหลดรูป
-    */
-
-};
-
-overlayImage.src = OVERLAY_URL;
-
-
-/*
-==================================================
-UPLOAD
-==================================================
-*/
-
-imageInput.addEventListener(
-    "change",
-    function () {
+    imageInput.addEventListener("change", function () {
 
         const file = this.files[0];
 
-        if (!file)
-            return;
+        if (!file) return;
 
-
-        const reader =
-            new FileReader();
-
+        const reader = new FileReader();
 
         reader.onload = function (event) {
 
-            userImage =
-                new Image();
+            const userImage = new Image();
 
+            userImage.onload = function () {
 
-            userImage.onload =
-                function () {
+                render(userImage);
 
-                    createImage();
+            };
 
-                };
-
-
-            userImage.src =
-                event.target.result;
+            userImage.src = event.target.result;
 
         };
 
-
         reader.readAsDataURL(file);
 
-    }
-);
+    });
 
 
-/*
-==================================================
-CREATE IMAGE
-==================================================
-*/
+    // ==============================
+    // Render
+    // ==============================
 
-function createImage() {
-
-    if (
-        !userImage ||
-        !overlayImage.complete
-    ) {
-        return;
-    }
-
-
-    /*
-        ใช้ขนาด Overlay
-        เป็นขนาดไฟล์สุดท้าย
-    */
-
-    canvas.width =
-        overlayImage.naturalWidth;
-
-    canvas.height =
-        overlayImage.naturalHeight;
-
-
-    /*
-        พื้นที่รูป
-    */
-
-    const x =
-        canvas.width *
-        PHOTO_AREA.x / 100;
-
-
-    const y =
-        canvas.height *
-        PHOTO_AREA.y / 100;
-
-
-    const areaWidth =
-        canvas.width *
-        PHOTO_AREA.width / 100;
-
-
-    const areaHeight =
-        canvas.height *
-        PHOTO_AREA.height / 100;
-
-
-    /*
-        ==========================================
-        ทำให้รูป User พอดีกับพื้นที่
-        แบบ COVER
-        ==========================================
-    */
-
-    const imageRatio =
-        userImage.width /
-        userImage.height;
-
-
-    const areaRatio =
-        areaWidth /
-        areaHeight;
-
-
-    let drawWidth;
-    let drawHeight;
-
-
-    if (imageRatio > areaRatio) {
+    function render(userImage) {
 
         /*
-            รูปกว้างกว่า
-        */
+         * Canvas = ขนาดรูปที่อัปโหลด
+         * Overlay = ปรับให้เท่ากับ Canvas 100%
+         */
 
-        drawHeight =
-            areaHeight;
-
-        drawWidth =
-            drawHeight *
-            imageRatio;
-
-    } else {
-
-        /*
-            รูปสูงกว่า
-        */
-
-        drawWidth =
-            areaWidth;
-
-        drawHeight =
-            drawWidth /
-            imageRatio;
-
-    }
+        canvas.width = userImage.naturalWidth;
+        canvas.height = userImage.naturalHeight;
 
 
-    /*
-        Center รูป
-    */
+        // --------------------------
+        // วาดรูปผู้ใช้
+        // --------------------------
 
-    const drawX =
-        x +
-        (areaWidth - drawWidth) / 2;
+        ctx.clearRect(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
 
-
-    const drawY =
-        y +
-        (areaHeight - drawHeight) / 2;
-
-
-    /*
-        ==========================================
-        Clip รูปให้อยู่ในพื้นที่
-        ==========================================
-    */
-
-    ctx.save();
+        ctx.drawImage(
+            userImage,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
 
 
-    ctx.beginPath();
+        // --------------------------
+        // วาด Overlay
+        // ให้เท่ากับรูปพอดี
+        // --------------------------
 
-    ctx.rect(
-        x,
-        y,
-        areaWidth,
-        areaHeight
-    );
+        if (overlay.complete && overlay.naturalWidth > 0) {
 
-    ctx.clip();
-
-
-    /*
-        วาดรูป User
-    */
-
-    ctx.drawImage(
-        userImage,
-        drawX,
-        drawY,
-        drawWidth,
-        drawHeight
-    );
-
-
-    ctx.restore();
-
-
-    /*
-        ==========================================
-        วาง Overlay ด้านบน
-        ==========================================
-    */
-
-    ctx.drawImage(
-        overlayImage,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    /*
-        แสดงผล
-    */
-
-    empty.style.display =
-        "none";
-
-    canvas.style.display =
-        "block";
-
-    downloadBtn.disabled =
-        false;
-
-}
-
-
-/*
-==================================================
-DOWNLOAD
-==================================================
-*/
-
-downloadBtn.addEventListener(
-    "click",
-    function () {
-
-        if (!userImage)
-            return;
-
-
-        const link =
-            document.createElement("a");
-
-
-        link.download =
-            "overlay-result.png";
-
-
-        link.href =
-            canvas.toDataURL(
-                "image/png"
+            ctx.drawImage(
+                overlay,
+                0,
+                0,
+                canvas.width,
+                canvas.height
             );
 
+            showResult();
+
+        } else {
+
+            overlay.onload = function () {
+
+                ctx.drawImage(
+                    overlay,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                showResult();
+
+            };
+
+        }
+
+    }
+
+
+    // ==============================
+    // แสดงผล
+    // ==============================
+
+    function showResult() {
+
+        preview.src = canvas.toDataURL("image/png");
+
+        preview.classList.remove("d-none");
+
+        downloadBtn.style.display = "block";
+
+    }
+
+
+    // ==============================
+    // Download
+    // ==============================
+
+    downloadBtn.addEventListener("click", function () {
+
+        const link = document.createElement("a");
+
+        link.download = "overlay-result.png";
+
+        link.href = canvas.toDataURL("image/png");
 
         link.click();
 
-    }
-);
+    });
 
 </script>
 
